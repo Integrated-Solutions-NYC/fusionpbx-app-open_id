@@ -46,7 +46,7 @@ class open_id_azure_b2c implements open_id_authenticator {
   	 *
   	 * @param string $client_id     Your Client ID.
   	 * @param string $client_secret Your Client Secret.
-  	 * @param string $redirect_uri  The redirect URI registered with Google.
+  	 * @param string $redirect_uri  The redirect URI registered with OIDC provider.
   	 * @param string $scope         Space-separated scopes (default: "openid email profile").
   	 */
     public function __construct($scope = "openid email profile") {
