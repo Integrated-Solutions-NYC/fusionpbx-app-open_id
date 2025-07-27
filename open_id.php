@@ -29,10 +29,14 @@
 require_once dirname(__DIR__, 2) . '/resources/require.php';
 
 //redirect to open_id authentication
-if (isset($_GET['action']) && $settings->get('open_id', 'enabled', false)) {
-
-	//decode url
-	$open_id_authenticator = urldecode($_GET['action']);
+if ( (isset($_GET['action']) || isset($_SESSION['open_id_action']) )
+		&& $settings->get('open_id', 'enabled', false)) {
+	if (isset($_GET['action'])) {
+		//decode url
+		$open_id_authenticator = urldecode($_GET['action']);
+	} else {
+		$open_id_authenticator = $_SESSION['open_id_action'];
+	}
 
 	//sanitize the name like auto_loader
 	$open_id_authenticator = preg_replace('[^a-zA-Z0-9_]', '', $open_id_authenticator);
