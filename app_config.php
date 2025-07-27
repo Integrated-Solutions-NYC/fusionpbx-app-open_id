@@ -199,7 +199,7 @@ $apps[$x]['default_settings'][$y]['default_setting_uuid'] = "1859dc9c-3d18-4ae4-
 $apps[$x]['default_settings'][$y]['default_setting_category'] = "open_id";
 $apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "azure_b2c_image";
 $apps[$x]['default_settings'][$y]['default_setting_name'] = "text";
-$apps[$x]['default_settings'][$y]['default_setting_value'] = "/var/www/fusionpbx/app/open_id/resources/images/azure_b2c/sso.png";
+$apps[$x]['default_settings'][$y]['default_setting_value'] = "/var/www/fusionpbx/app/open_id/resources/images/azure_b2c/sso_icon_only.png";
 $apps[$x]['default_settings'][$y]['default_setting_enabled'] = "false";
 $apps[$x]['default_settings'][$y]['default_setting_description'] = "Sign On Button Image";
 $y++;
