@@ -142,7 +142,7 @@ class open_id_azure_b2c implements open_id_authenticator {
 
                 if (isset($user_info[$this->azure_field])) {
                     global $database;
-                    $sql = "SELECT user_uuid, username, u.domain_uuid domain_uuid, d.domain_name domain_name, user_email
+                    $sql = "SELECT user_uuid, username, u.domain_uuid domain_uuid, d.domain_name domain_name
                             FROM v_users u
                             LEFT JOIN v_domains d ON d.domain_uuid = u.domain_uuid
                             WHERE u.{$this->table_field} = :value
@@ -152,7 +152,13 @@ class open_id_azure_b2c implements open_id_authenticator {
                     $row = $database->select($sql, $params, 'row');
 
                     if ($row) {
-                        $result = array_merge($row, ["authorized" => true]);
+                        
+                        $result = array_merge($row, [
+                                              "authorized" => true,
+                                              "user_mail" => $user_info['email']
+                                             ]);
+                      $_SESSION['authorized'] = true;
+                        
                     }
                 }
             }
