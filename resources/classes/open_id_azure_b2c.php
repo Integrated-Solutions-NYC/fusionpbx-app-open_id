@@ -129,7 +129,6 @@ class open_id_azure_b2c implements open_id_authenticator {
             $_SESSION['open_id_code_verifier'] = bin2hex(random_bytes(50));
             $_SESSION['open_id_authorize'] = true;
             $_SESSION['open_id_action'] = 'open_id_azure_b2c';
-            header('Location: https://' . $_SESSION['domain_name'] . '/app/open_id/open_id.php');
 
             $authorize_url = $this->get_authorization_url();
             header('Location: ' . $authorize_url);
@@ -143,10 +142,12 @@ class open_id_azure_b2c implements open_id_authenticator {
 
                 if (isset($user_info[$this->azure_field])) {
                     global $database;
-                    $sql = "SELECT user_uuid, username, u.domain_uuid, d.domain_name
+                    $sql = "SELECT user_uuid, username, u.domain_uuid domain_uuid, d.domain_name domain_name, user_email
                             FROM v_users u
                             LEFT JOIN v_domains d ON d.domain_uuid = u.domain_uuid
-                            WHERE u.{$this->table_field} = :value";
+                            WHERE u.{$this->table_field} = :value
+                            AND user_enabled = 'true'
+                            LIMIT 1";
                     $params = ['value' => $user_info[$this->azure_field]];
                     $row = $database->select($sql, $params, 'row');
 
