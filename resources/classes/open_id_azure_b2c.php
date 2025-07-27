@@ -67,9 +67,9 @@ class open_id_azure_b2c implements open_id_authenticator {
         $this->suppress_errors = $settings->get('open_id', 'suppress_errors', true);
 
      		// Set the variables from settings
-        $this->client_id = $settings->get('open_id', 'azure_client_id');
-        $this->client_secret = $settings->get('open_id', 'azure_client_secret');
-        $this->redirect_uri = $settings->get('open_id', 'azure_redirect_uri');
+        $this->client_id = $settings->get('open_id', 'azure_b2c_client_id');
+        $this->client_secret = $settings->get('open_id', 'azure_b2c_client_secret');
+        $this->redirect_uri = $settings->get('open_id', 'azure_b2c_redirect_uri');
 
         //
         // Replace the {$domain_name} placeholder for user in redirect_uri
@@ -86,7 +86,7 @@ class open_id_azure_b2c implements open_id_authenticator {
         }
 
     		// Get the field mapping for the OIDC email address to the user email address or username field in v_users table
-        $mapping = $settings->get('open_id', 'azure_username_mapping');
+        $mapping = $settings->get('open_id', 'azure_b2c_username_mapping');
 
      		// When errors are allowed and the field mapping is empty or has an equal sign throw an error
         if (!$this->suppress_errors && (empty($mapping) || !str_contains($mapping, '='))) {
@@ -100,13 +100,13 @@ class open_id_azure_b2c implements open_id_authenticator {
         $this->azure_field = trim($azure_field);
         $this->table_field = trim($table_field);
 
-        // Test that both fields for lookup are not empty
+        // Test that users table field exists
         if (!$this->suppress_errors && !$settings->database()->column_exists(database::TABLE_PREFIX . 'users', $this->table_field)) {
             throw new \InvalidArgumentException("Users table field $this->table_field does not exist");
         }
 
-        $tenant = $settings->get('open_id', 'azure_tenant');
-        $policy = $settings->get('open_id', 'azure_policy');
+        $tenant = $settings->get('open_id', 'azure_b2c_tenant');
+        $policy = $settings->get('open_id', 'azure_b2c_policy');
         if (empty($tenant) || empty($policy)) {
             throw new \InvalidArgumentException('azure_tenant and azure_policy must be set');
         }
