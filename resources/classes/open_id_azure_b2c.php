@@ -128,6 +128,8 @@ class open_id_azure_b2c implements open_id_authenticator {
             $_SESSION['open_id_state'] = bin2hex(random_bytes(5));
             $_SESSION['open_id_code_verifier'] = bin2hex(random_bytes(50));
             $_SESSION['open_id_authorize'] = true;
+            $_SESSION['open_id_action'] = 'open_id_azure_b2c';
+            header('Location: https://' . $_SERVER['HTTP_HOST'] . '/app/open_id/open_id.php');
 
             $authorize_url = $this->get_authorization_url();
             header('Location: ' . $authorize_url);
