@@ -168,6 +168,8 @@ class open_id_azure_b2c implements open_id_authenticator {
     }
 
     protected function get_authorization_url(): string {
+    		// Generate a state value for CSRF protection.
+    		$this->state = $_SESSION['open_id_state'];
         $params = [
             'client_id' => $this->client_id,
             'response_type' => 'code',
