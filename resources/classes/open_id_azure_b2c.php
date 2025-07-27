@@ -75,7 +75,7 @@ class open_id_azure_b2c implements open_id_authenticator {
         // Replace the {$domain_name} placeholder for user in redirect_uri
         //
         if (str_contains($this->redirect_uri, '{$domain_name}')) {
-            $this->redirect_uri = str_replace('{$domain_name}', $_SERVER['HTTP_HOST'], $this->redirect_uri);
+            $this->redirect_uri = str_replace('{$domain_name}', $_SESSION['domain_name'], $this->redirect_uri);
         }
 
     		//
@@ -129,7 +129,7 @@ class open_id_azure_b2c implements open_id_authenticator {
             $_SESSION['open_id_code_verifier'] = bin2hex(random_bytes(50));
             $_SESSION['open_id_authorize'] = true;
             $_SESSION['open_id_action'] = 'open_id_azure_b2c';
-            header('Location: https://' . $_SERVER['HTTP_HOST'] . '/app/open_id/open_id.php');
+            header('Location: https://' . $_SESSION['domain_name'] . '/app/open_id/open_id.php');
 
             $authorize_url = $this->get_authorization_url();
             header('Location: ' . $authorize_url);
