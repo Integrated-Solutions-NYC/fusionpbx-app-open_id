@@ -206,4 +206,19 @@ class open_id_azure_b2c implements open_id_authenticator {
         if (count($parts) !== 3) return [];
         return json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
     }
+
+    public static function get_banner_image(): string {
+    		global $settings;
+    		$azure_b2c_banner = $settings->get('open_id', 'azure_b2c_image', '');
+    		$text = new text();
+    		$text_array = $text->get();
+    		$alt = $text_array['alt-banner'] ?? 'Sign-in Using Microsoft';
+    		if (file_exists($azure_b2c_banner)) {
+      			$file_handle = fopen($azure_b2c_banner, 'rb');
+      			$data = base64_encode(fread($file_handle, 2182));
+      			fclose($file_handle);
+      			return "<img src='data:image/png;base64,$data' alt='$alt'/>";
+    		}
+    		return $alt;
+  	}
 }
