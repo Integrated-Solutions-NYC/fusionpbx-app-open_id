@@ -146,9 +146,13 @@ class open_id_azure_b2c implements open_id_authenticator {
                             FROM v_users u
                             LEFT JOIN v_domains d ON d.domain_uuid = u.domain_uuid
                             WHERE u.{$this->table_field} = :value
+                            AND d.domain_uuid = :domain_uuid
                             AND user_enabled = 'true'
                             LIMIT 1";
-                    $params = ['value' => $user_info[$this->azure_field]];
+                    $params = [
+                      'value' => $user_info[$this->azure_field],
+                      'domain_uuid' => $_SESSION['domain_uuid']
+                    ];
                     $row = $database->select($sql, $params, 'row');
 
                     if ($row) {
