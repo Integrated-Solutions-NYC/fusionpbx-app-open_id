@@ -1,6 +1,6 @@
 <?php  // July 27 2025 - Ardavan Hashemzadeh
 
-class open_id_azure implements open_id_authenticator {
+class open_id_azure_b2c implements open_id_authenticator {
 
   	//
   	// OpenID Connect State Variables
