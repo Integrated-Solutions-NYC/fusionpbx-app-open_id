@@ -146,23 +146,53 @@ class open_id_azure_b2c implements open_id_authenticator {
                             FROM v_users u
                             LEFT JOIN v_domains d ON d.domain_uuid = u.domain_uuid
                             WHERE u.{$this->table_field} = :value
-                            AND d.domain_uuid = :domain_uuid
-                            AND user_enabled = 'true'
-                            LIMIT 1";
+                            AND user_enabled = 'true'";
                     $params = [
-                      'value' => $user_info[$this->azure_field],
-                      'domain_uuid' => $_SESSION['domain_uuid']
+                      'value' => $user_info[$this->azure_field] //,
+                      // 'domain_uuid' => $_SESSION['domain_uuid']
                     ];
-                    $row = $database->select($sql, $params, 'row');
+                    $rows = $database->select($sql, $params, 'row');
 
-                    if ($row) {
-                        
-                        $result = array_merge($row, [
-                                              "authorized" => true,
-                                              "user_mail" => $user_info['email']
-                                             ]);
-                      $_SESSION['authorized'] = true;
-                        
+                    if ($rows && count($rows) > 0) {
+                        if (isset($_POST['selected_domain_uuid'])) {
+                            foreach ($rows as $row) {
+                                if ($row['domain_uuid'] === $_POST['selected_domain_uuid']) {
+                                    $result = array_merge($row, [
+                                        "authorized" => true,
+                                        "user_mail" => $user_info['email']
+                                    ]);
+                                    $_SESSION['authorized'] = true;
+                                    $_SESSION['domain_uuid'] = $row['domain_uuid'];
+                                    break;
+                                }
+                            }
+                        }
+                        // If multiple domains, show selection form
+                        elseif (count($rows) > 1) {
+                            echo "<form method='post'>";
+                            echo "<h3>Select your domain:</h3>";
+                            foreach ($rows as $row) {
+                                echo "<label>";
+                                echo "<input type='radio' name='selected_domain_uuid' value='{$row['domain_uuid']}' required> ";
+                                echo htmlspecialchars($row['domain_name']);
+                                echo "</label><br>";
+                            }
+                            // Preserve code and other needed info
+                            echo "<input type='hidden' name='code' value='" . htmlspecialchars($_GET['code']) . "'>";
+                            echo "<button type='submit'>Continue</button>";
+                            echo "</form>";
+                            exit();
+                        }
+                        // Only one domain, proceed
+                        else {
+                            $row = $rows[0];
+                            $result = array_merge($row, [
+                                "authorized" => true,
+                                "user_mail" => $user_info['email']
+                            ]);
+                            $_SESSION['authorized'] = true;
+                            $_SESSION['domain_uuid'] = $row['domain_uuid'];
+                        }
                     }
                 }
             }
