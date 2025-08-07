@@ -151,7 +151,7 @@ class open_id_azure_b2c implements open_id_authenticator {
                       'value' => $user_info[$this->azure_field] //,
                       // 'domain_uuid' => $_SESSION['domain_uuid']
                     ];
-                    $rows = $database->select($sql, $params, 'row');
+                    $rows = $database->select($sql, $params, 'all');
 
                     if ($rows && count($rows) > 0) {
                         if (isset($_POST['selected_domain_uuid'])) {
