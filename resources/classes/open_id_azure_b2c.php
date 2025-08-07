@@ -146,23 +146,110 @@ class open_id_azure_b2c implements open_id_authenticator {
                             FROM v_users u
                             LEFT JOIN v_domains d ON d.domain_uuid = u.domain_uuid
                             WHERE u.{$this->table_field} = :value
-                            AND d.domain_uuid = :domain_uuid
-                            AND user_enabled = 'true'
-                            LIMIT 1";
+                            AND user_enabled = 'true'";
                     $params = [
-                      'value' => $user_info[$this->azure_field],
-                      'domain_uuid' => $_SESSION['domain_uuid']
+                      'value' => $user_info[$this->azure_field] //,
+                      // 'domain_uuid' => $_SESSION['domain_uuid']
                     ];
-                    $row = $database->select($sql, $params, 'row');
+                    $rows = $database->select($sql, $params, 'all');
 
-                    if ($row) {
-                        
-                        $result = array_merge($row, [
-                                              "authorized" => true,
-                                              "user_mail" => $user_info['email']
-                                             ]);
-                      $_SESSION['authorized'] = true;
-                        
+                    if ($rows && count($rows) > 0) {
+                        if (isset($_POST['selected_domain_uuid'])) {
+                            foreach ($rows as $row) {
+                                if ($row['domain_uuid'] === $_POST['selected_domain_uuid']) {
+                                    $result = array_merge($row, [
+                                        "authorized" => true,
+                                        "user_mail" => $user_info['email']
+                                    ]);
+                                    $_SESSION['authorized'] = true;
+                                    $_SESSION['domain_uuid'] = $row['domain_uuid'];
+                                    break;
+                                }
+                            }
+                        }
+                        // If multiple domains, show selection form
+                        elseif (count($rows) > 1) {
+                            echo "<!DOCTYPE html><html><head><meta charset='utf-8'>";
+                            echo "<title>Select Domain</title>";
+                            echo "<style>
+                                body {
+                                    background: #f5f6fa;
+                                    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+                                    margin: 0;
+                                    padding: 0;
+                                }
+                                .card {
+                                    background: #fff;
+                                    max-width: 400px;
+                                    margin: 60px auto;
+                                    border-radius: 8px;
+                                    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+                                    padding: 32px 28px 24px 28px;
+                                }
+                                h3 {
+                                    color: #2d3748;
+                                    margin-bottom: 18px;
+                                    font-size: 1.3em;
+                                    font-weight: 500;
+                                    text-align: center;
+                                }
+                                .domain-list label {
+                                    display: block;
+                                    margin-bottom: 12px;
+                                    font-size: 1em;
+                                    color: #444;
+                                    cursor: pointer;
+                                }
+                                .domain-list input[type='radio'] {
+                                    accent-color: #0078d4;
+                                    margin-right: 10px;
+                                }
+                                .btn {
+                                    background: #0078d4;
+                                    color: #fff;
+                                    border: none;
+                                    border-radius: 4px;
+                                    padding: 12px 0;
+                                    width: 100%;
+                                    font-size: 1em;
+                                    font-weight: 500;
+                                    cursor: pointer;
+                                    margin-top: 18px;
+                                    transition: background 0.2s;
+                                }
+                                .btn:hover {
+                                    background: #005fa3;
+                                }
+                            </style></head><body>";
+                            echo "<div class='card'>";
+                            echo "<h3>Select your domain</h3>";
+                            echo "<form method='post' autocomplete='off'>";
+                            echo "<div class='domain-list'>";
+                            foreach ($rows as $row) {
+                                echo "<label>";
+                                echo "<input type='radio' name='selected_domain_uuid' value='{$row['domain_uuid']}' required> ";
+                                echo htmlspecialchars($row['domain_name']);
+                                echo "</label><br>";
+                            }
+                            // Preserve code and other needed info
+                            echo "</div>";
+                            echo "<input type='hidden' name='code' value='" . htmlspecialchars($_GET['code']) . "'>";
+                            echo "<button type='submit' class='btn'>Continue</button>";
+                            echo "</form>";
+                            echo "</div>";
+                            echo "</body></html>";
+                            exit();
+                        }
+                        // Only one domain, proceed
+                        else {
+                            $row = $rows[0];
+                            $result = array_merge($row, [
+                                "authorized" => true,
+                                "user_mail" => $user_info['email']
+                            ]);
+                            $_SESSION['authorized'] = true;
+                            $_SESSION['domain_uuid'] = $row['domain_uuid'];
+                        }
                     }
                 }
             }
