@@ -129,6 +129,7 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
             $_SESSION['open_id_code_verifier'] = bin2hex(random_bytes(50));
             $_SESSION['open_id_authorize'] = true;
             $_SESSION['open_id_action'] = 'open_id_azure_b2c_provision';
+            $_SESSION['open_id_azure_b2c_provision_port'] = $_GET['port'];
 
             $authorize_url = $this->get_authorization_url();
             header('Location: ' . $authorize_url);
@@ -330,7 +331,7 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
                                 $payload_json = json_encode($payload, JSON_PRETTY_PRINT);
 
                                 // Get port from query string, fallback to 8080
-                                $port = isset($_GET['port']) ? intval($_GET['port']) : 8080;
+                                $port = isset($_SESSION['open_id_azure_b2c_provision_port']) ? intval($_SESSION['open_id_azure_b2c_provision_port']) : 8080;
                                 if ($port <= 0) $port = 8080;
 
                                 // Output HTML page with JS to POST payload (like ProvisionExample.php)
@@ -366,8 +367,8 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
                             echo "<label><input type='radio' name='selected_extension' value='{$ext_at_domain}' required> " . htmlspecialchars($ext_at_domain) . "</label><br>";
                         }
                         echo "<input type='hidden' name='code' value='" . htmlspecialchars($_GET['code']) . "'>";
-                        if (isset($_GET['port'])) {
-                            echo "<input type='hidden' name='port' value='" . intval($_GET['port']) . "'>";
+                        if (isset($_SESSION['open_id_azure_b2c_provision_port'])) {
+                            echo "<input type='hidden' name='port' value='" . intval($_SESSION['open_id_azure_b2c_provision_port']) . "'>";
                         }
                         echo "<button type='submit' style='margin-top:18px;padding:12px;background:#0078d4;color:#fff;border:none;border-radius:4px;width:100%;'>Provision</button>";
                         echo "</form></div></body></html>";
