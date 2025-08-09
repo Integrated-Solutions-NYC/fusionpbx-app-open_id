@@ -347,7 +347,7 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
                                         body: payload
                                     })
                                     .then(r => r.text())
-                                    .then(txt => document.getElementById('status').innerText = 'Success: ' + txt)
+                                    .then(txt => document.getElementById('status').innerText = 'Success!' ) "/* + txt) */"
                                     .catch(err => document.getElementById('status').innerText = 'Error: ' + err);
                                 </script>";
                                 echo "</body></html>";
