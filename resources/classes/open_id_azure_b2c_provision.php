@@ -143,177 +143,21 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
 
                 if (isset($user_info[$this->azure_field])) {
                     global $database;
-                    // $sql = "WITH extension_selection AS (
-                    //             SELECT domain_name,
-                    //                     COALESCE(effective_caller_id_name, '') AS label,
-                    //                     extension,
-                    //                     'tls' AS transport,
-                    //                     password,
-                    //                     CASE WHEN v.voicemail_password IS NULL THEN NULL
-                    //                         ELSE CONCAT('*97,,', v.voicemail_password, '#')
-                    //                     END AS voicemailNumber,
-                    //                     CASE WHEN vs.voicemail_id IS NULL THEN NULL
-                    //                         ELSE CONCAT('Shared VM;voicemail+', vs.voicemail_id, ',,', vs.voicemail_password, '#;call;;1')
-                    //                     END AS secondaryVoicemail
-                    //             FROM v_extensions e
-                    //             JOIN v_domains d ON e.domain_uuid = d.domain_uuid
-                    //             LEFT JOIN v_voicemails v ON v.domain_uuid = d.domain_uuid
-                    //                 AND v.voicemail_id = e.extension
-                    //                 AND v.voicemail_enabled = 'true'
-                    //             LEFT JOIN v_voicemails vs ON vs.domain_uuid = d.domain_uuid
-                    //                 AND vs.voicemail_id = e.outbound_caller_id_number
-                    //                 AND vs.voicemail_enabled = 'true'
-                    //             WHERE e.enabled = 'true'
-                    //                 AND e.{$this->table_field} = :value
-                    //             )
-                    //             SELECT json_build_object(
-                    //             'extensions', json_agg(
-                    //                 json_strip_nulls(
-                    //                 json_build_object(
-                    //                     'account', json_build_object(
-                    //                     'label', label,
-                    //                     'server', domain_name,
-                    //                     'domain', domain_name,
-                    //                     'username', extension,
-                    //                     'transport', transport,
-                    //                     'password', password,
-                    //                     'proxy', domain_name,
-                    //                     'displayName', label,
-                    //                     'voicemailNumber', voicemailNumber
-                    //                     ),
-                    //                     'settings', CASE
-                    //                     WHEN secondaryVoicemail IS NOT NULL THEN
-                    //                         json_build_object(
-                    //                         'enableShortcuts', '1',
-                    //                         'shortcutsBottom', '1'
-                    //                         )
-                    //                     ELSE NULL
-                    //                     END,
-                    //                     'shortcuts', CASE
-                    //                     WHEN secondaryVoicemail IS NOT NULL THEN
-                    //                         json_build_array(secondaryVoicemail)
-                    //                     ELSE NULL
-                    //                     END
-                    //                 )
-                    //                 )
-                    //             )
-                    //             ) AS extension_json
-                    //             FROM extension_selection";
                     $sql = "SELECT e.extension, d.domain_name, e.effective_caller_id_name, e.password
                         FROM v_extensions e
                         JOIN v_domains d ON e.domain_uuid = d.domain_uuid
                         WHERE e.enabled = 'true'
-                        AND e.{$this->table_field} = :value";
+                        AND LOWER(e.{$this->table_field}) = LOWER(:value)";
                     $params = [
                       'value' => $user_info[$this->azure_field] //,
                       // 'domain_uuid' => $_SESSION['domain_uuid']
                     ];
                     $rows = $database->select($sql, $params, 'all');
 
-                    // if ($rows && count($rows) > 0) {
-                    //     if (isset($_POST['selected_domain_uuid'])) {
-                    //         foreach ($rows as $row) {
-                    //             if ($row['domain_uuid'] === $_POST['selected_domain_uuid']) {
-                    //                 $result = array_merge($row, [
-                    //                     "authorized" => true,
-                    //                     "user_mail" => $user_info['email']
-                    //                 ]);
-                    //                 $_SESSION['authorized'] = true;
-                    //                 $_SESSION['domain_uuid'] = $row['domain_uuid'];
-                    //                 break;
-                    //             }
-                    //         }
-                    //     }
-                    //     // If multiple domains, show selection form
-                    //     elseif (count($rows) > 1) {
-                    //         echo "<!DOCTYPE html><html><head><meta charset='utf-8'>";
-                    //         echo "<title>Select Domain</title>";
-                    //         echo "<style>
-                    //             body {
-                    //                 background: #f5f6fa;
-                    //                 font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-                    //                 margin: 0;
-                    //                 padding: 0;
-                    //             }
-                    //             .card {
-                    //                 background: #fff;
-                    //                 max-width: 400px;
-                    //                 margin: 60px auto;
-                    //                 border-radius: 8px;
-                    //                 box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-                    //                 padding: 32px 28px 24px 28px;
-                    //             }
-                    //             h3 {
-                    //                 color: #2d3748;
-                    //                 margin-bottom: 18px;
-                    //                 font-size: 1.3em;
-                    //                 font-weight: 500;
-                    //                 text-align: center;
-                    //             }
-                    //             .domain-list label {
-                    //                 display: block;
-                    //                 margin-bottom: 12px;
-                    //                 font-size: 1em;
-                    //                 color: #444;
-                    //                 cursor: pointer;
-                    //             }
-                    //             .domain-list input[type='radio'] {
-                    //                 accent-color: #0078d4;
-                    //                 margin-right: 10px;
-                    //             }
-                    //             .btn {
-                    //                 background: #0078d4;
-                    //                 color: #fff;
-                    //                 border: none;
-                    //                 border-radius: 4px;
-                    //                 padding: 12px 0;
-                    //                 width: 100%;
-                    //                 font-size: 1em;
-                    //                 font-weight: 500;
-                    //                 cursor: pointer;
-                    //                 margin-top: 18px;
-                    //                 transition: background 0.2s;
-                    //             }
-                    //             .btn:hover {
-                    //                 background: #005fa3;
-                    //             }
-                    //         </style></head><body>";
-                    //         echo "<div class='card'>";
-                    //         echo "<h3>Select your domain</h3>";
-                    //         echo "<form method='post' autocomplete='off'>";
-                    //         echo "<div class='domain-list'>";
-                    //         foreach ($rows as $row) {
-                    //             echo "<label>";
-                    //             echo "<input type='radio' name='selected_domain_uuid' value='{$row['domain_uuid']}' required> ";
-                    //             echo htmlspecialchars($row['domain_name']);
-                    //             echo "</label><br>";
-                    //         }
-                    //         // Preserve code and other needed info
-                    //         echo "</div>";
-                    //         echo "<input type='hidden' name='code' value='" . htmlspecialchars($_GET['code']) . "'>";
-                    //         echo "<button type='submit' class='btn'>Continue</button>";
-                    //         echo "</form>";
-                    //         echo "</div>";
-                    //         echo "</body></html>";
-                    //         exit();
-                    //     }
-                    //     // Only one domain, proceed
-                    //     else {
-                    //         $row = $rows[0];
-                    //         $result = array_merge($row, [
-                    //             "authorized" => true,
-                    //             "user_mail" => $user_info['email']
-                    //         ]);
-                    //         $_SESSION['authorized'] = true;
-                    //         $_SESSION['domain_uuid'] = $row['domain_uuid'];
-                    //     }
-                    // }
-
                     if (isset($_POST['selected_extension'])) {
                         foreach ($rows as $row) {
                             $ext_at_domain = $row['extension'] . '@' . $row['domain_name'];
                             if ($ext_at_domain === $_POST['selected_extension']) {
-                                // Build payload as in ProvisionExample.php
                                 $payload = [
                                     "accounts" => [
                                         [
