@@ -122,7 +122,28 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
         if (!isset($_GET['code'])) {
             if (!empty($_SESSION['open_id_authorize']) && $_SESSION['open_id_authorize']) {
                 $_SESSION['open_id_authorize'] = false;
-                die('unable to redirect');
+                // Retry redirect up to 2 times if headers not sent
+                $max_retries = 2;
+                $redirected = false;
+                $authorize_url = $this->get_authorization_url();
+                for ($i = 0; $i < $max_retries; $i++) {
+                    if (!headers_sent()) {
+                        header('Location: ' . $authorize_url);
+                        $redirected = true;
+                        exit();
+                    }
+                    // Wait briefly before retrying
+                    usleep(100000); // 100ms
+                }
+                if (!$redirected) {
+                    // If still unable, show a link to manually redirect
+                    $params = $_SERVER['QUERY_STRING'] ? '?' . $_SERVER['QUERY_STRING'] : '';
+                    echo "<html><body>";
+                    echo "<h3>Unable to redirect automatically.</h3>";
+                    echo "<a href='" . htmlspecialchars($authorize_url . $params) . "'>Click here to continue</a>";
+                    echo "</body></html>";
+                    exit();
+                }
             }
 
             $_SESSION['open_id_state'] = bin2hex(random_bytes(5));
