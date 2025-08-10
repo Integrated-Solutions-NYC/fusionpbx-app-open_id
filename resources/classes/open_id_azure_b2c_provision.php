@@ -157,7 +157,7 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
                     $selected_extension = $_POST['selected_extension'];
                     if (count($rows) === 1) {
                         $row = $rows[0];
-                        $ext_at_domain = $row['extension'] . '@' . $row['domain_name'];
+                        $selected_extension = $row['extension'] . '@' . $row['domain_name'];
                     }
 
                     if ($selected_extension != '') {
