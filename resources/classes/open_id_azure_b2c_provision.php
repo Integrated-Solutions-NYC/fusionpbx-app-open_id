@@ -155,10 +155,10 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
                             password,
                             CASE WHEN v.voicemail_password IS NULL THEN NULL
                                 ELSE CONCAT('*97,,', v.voicemail_password, '#')
-                            END AS voicemailNumber,
+                            END AS voicemail_number,
                             CASE WHEN vs.voicemail_id IS NULL THEN NULL
                                 ELSE CONCAT('Shared VM;voicemail+', vs.voicemail_id, ',,', vs.voicemail_password, '#;call;;1')
-                            END AS secondaryVoicemail
+                            END AS secondary_voicemail
                             FROM v_extensions e
                             JOIN v_domains d ON e.domain_uuid = d.domain_uuid
                             LEFT JOIN v_voicemails v ON v.domain_uuid = d.domain_uuid
@@ -195,7 +195,7 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
                                             "proxy" => $row['domain_name'],
                                             "transport" => $row['transport'],
                                             "password" => $row['password'],
-                                            "voicemailNumber" => $row['voicemailNumber']
+                                            "voicemailNumber" => $row['voicemail_number']
                                         ]
                                     ],
                                     "settings" => new \stdClass(),
