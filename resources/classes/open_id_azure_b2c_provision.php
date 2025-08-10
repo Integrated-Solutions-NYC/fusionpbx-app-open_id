@@ -143,11 +143,32 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
 
                 if (isset($user_info[$this->azure_field])) {
                     global $database;
-                    $sql = "SELECT e.extension, d.domain_name, e.effective_caller_id_name, e.password
+                    /* $sql = "SELECT e.extension, d.domain_name, e.effective_caller_id_name, e.password
                         FROM v_extensions e
                         JOIN v_domains d ON e.domain_uuid = d.domain_uuid
                         WHERE e.enabled = 'true'
-                        AND LOWER(e.{$this->table_field}) = LOWER(:value)";
+                        AND LOWER(e.{$this->table_field}) = LOWER(:value)"; */
+                    $sql = "SELECT domain_name,
+                            effective_caller_id_name,
+                            extension,
+                            'tls' AS transport,
+                            password,
+                            CASE WHEN v.voicemail_password IS NULL THEN NULL
+                                ELSE CONCAT('*97,,', v.voicemail_password, '#')
+                            END AS voicemailNumber,
+                            CASE WHEN vs.voicemail_id IS NULL THEN NULL
+                                ELSE CONCAT('Shared VM;voicemail+', vs.voicemail_id, ',,', vs.voicemail_password, '#;call;;1')
+                            END AS secondaryVoicemail
+                            FROM v_extensions e
+                            JOIN v_domains d ON e.domain_uuid = d.domain_uuid
+                            LEFT JOIN v_voicemails v ON v.domain_uuid = d.domain_uuid
+                                AND v.voicemail_id = e.extension
+                                AND v.voicemail_enabled = 'true'
+                            LEFT JOIN v_voicemails vs ON vs.domain_uuid = d.domain_uuid
+                                AND vs.voicemail_id = e.outbound_caller_id_number
+                                AND vs.voicemail_enabled = 'true'
+                            WHERE e.enabled = 'true'
+                            AND LOWER(e.{$this->table_field}) = LOWER(:value)";
                     $params = [
                       'value' => $user_info[$this->azure_field] //,
                       // 'domain_uuid' => $_SESSION['domain_uuid']
@@ -171,8 +192,10 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
                                             "username" => $row['extension'],
                                             "domain" => $row['domain_name'],
                                             "server" => $row['domain_name'],
-                                            "transport" => "tls",
-                                            "password" => $row['password']
+                                            "proxy" => $row['domain_name'],
+                                            "transport" => $row['transport'],
+                                            "password" => $row['password'],
+                                            "voicemailNumber" => $row['voicemailNumber']
                                         ]
                                     ],
                                     "settings" => new \stdClass(),
