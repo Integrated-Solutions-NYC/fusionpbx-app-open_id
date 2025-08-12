@@ -10,6 +10,9 @@ $domain->set();
 
 // Forward to open_id.php with all parameters
 $url = "/app/open_id/open_id.php?action=open_id_azure_b2c_provision";
+if ($_GET['action'] == 'open_id_azure_b2c_provision_dev') {
+    $url .= "_dev";
+}
 if (isset($_GET['port'])) {
     $url .= "&port=" . intval($_GET['port']);
 }

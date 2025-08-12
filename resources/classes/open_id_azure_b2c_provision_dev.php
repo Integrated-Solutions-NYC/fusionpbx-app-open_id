@@ -1,6 +1,6 @@
 <?php  // July 27 2025 - Copyright 2025 Ardavan Hashemzadeh <ardavan@solutionsdx.com>
 
-class open_id_azure_b2c_provision implements open_id_authenticator {
+class open_id_azure_b2c_provision_dev implements open_id_authenticator { // this and line 131 (has open_id_action) renamed for devwork
 
   	//
   	// OpenID Connect State Variables
@@ -128,7 +128,7 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
             $_SESSION['open_id_state'] = bin2hex(random_bytes(5));
             $_SESSION['open_id_code_verifier'] = bin2hex(random_bytes(50));
             $_SESSION['open_id_authorize'] = true;
-            $_SESSION['open_id_action'] = 'open_id_azure_b2c_provision';
+            $_SESSION['open_id_action'] = 'open_id_azure_b2c_provision_dev';
             $_SESSION['open_id_azure_b2c_provision_port'] = $_GET['port'];
 
             $authorize_url = $this->get_authorization_url();
