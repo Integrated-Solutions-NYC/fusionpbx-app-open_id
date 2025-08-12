@@ -204,7 +204,7 @@ class open_id_azure_b2c_provision_dev implements open_id_authenticator { // this
                                 if (!empty($row['secondary_voicemail'])) {
                                     $payload['settings']->enableShortcuts = "1";
                                     $payload['settings']->shortcutsBottom = "1";
-                                    //$payload['shortcuts'][] = $row['secondary_voicemail'];
+                                    $payload['shortcuts'][] = $row['secondary_voicemail'];
                                 }
                                 $payload_json = json_encode($payload, JSON_PRETTY_PRINT);
 
