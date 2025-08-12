@@ -201,6 +201,11 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
                                     "settings" => new \stdClass(),
                                     "shortcuts" => []
                                 ];
+                                if (!empty($row['secondary_voicemail'])) {
+                                    $payload['settings']->enableShortcuts = 1;
+                                    $payload['settings']->shortcutsBottom = 1;
+                                    $payload['shortcuts'][] = $row['secondary_voicemail'];
+                                }
                                 $payload_json = json_encode($payload, JSON_PRETTY_PRINT);
 
                                 // Get port from query string, fallback to 8080
