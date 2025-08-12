@@ -128,7 +128,7 @@ class open_id_azure_b2c_provision_dev implements open_id_authenticator { // this
             $_SESSION['open_id_state'] = bin2hex(random_bytes(5));
             $_SESSION['open_id_code_verifier'] = bin2hex(random_bytes(50));
             $_SESSION['open_id_authorize'] = true;
-            $_SESSION['open_id_action'] = 'open_id_azure_b2c_provision_dev';
+            $_SESSION['open_id_action'] = get_class($this);
             $_SESSION['open_id_azure_b2c_provision_port'] = $_GET['port'];
 
             $authorize_url = $this->get_authorization_url();
@@ -157,7 +157,7 @@ class open_id_azure_b2c_provision_dev implements open_id_authenticator { // this
                                 ELSE CONCAT('*97,,', v.voicemail_password, '#')
                             END AS voicemail_number,
                             CASE WHEN vs.voicemail_id IS NULL THEN NULL
-                                ELSE CONCAT('0=Shared VM;voicemail+', vs.voicemail_id, ',,', vs.voicemail_password, '#;call;;1')
+                                ELSE CONCAT('Shared VM;voicemail+', vs.voicemail_id, ',,', vs.voicemail_password, '#;call;;1')
                             END AS secondary_voicemail
                             FROM v_extensions e
                             JOIN v_domains d ON e.domain_uuid = d.domain_uuid
