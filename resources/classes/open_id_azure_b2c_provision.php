@@ -157,7 +157,7 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
                                 ELSE CONCAT('*97,,', v.voicemail_password, '#')
                             END AS voicemail_number,
                             CASE WHEN vs.voicemail_id IS NULL THEN NULL
-                                ELSE CONCAT('Shared VM;voicemail+', vs.voicemail_id, ',,', vs.voicemail_password, '#;call;;1')
+                                ELSE CONCAT('0=Shared VM;voicemail+', vs.voicemail_id, ',,', vs.voicemail_password, '#;call;;1')
                             END AS secondary_voicemail
                             FROM v_extensions e
                             JOIN v_domains d ON e.domain_uuid = d.domain_uuid
@@ -202,8 +202,8 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
                                     "shortcuts" => []
                                 ];
                                 if (!empty($row['secondary_voicemail'])) {
-                                    $payload['settings']->enableShortcuts = 1;
-                                    $payload['settings']->shortcutsBottom = 1;
+                                    $payload['settings']->enableShortcuts = "1";
+                                    $payload['settings']->shortcutsBottom = "1";
                                     $payload['shortcuts'][] = $row['secondary_voicemail'];
                                 }
                                 $payload_json = json_encode($payload, JSON_PRETTY_PRINT);
