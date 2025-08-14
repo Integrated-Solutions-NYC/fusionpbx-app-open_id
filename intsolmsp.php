@@ -12,7 +12,7 @@ $domain->set();
 $url = "/app/open_id/open_id.php?action=open_id_azure_b2c_provision";
 if (isset($_GET['env'])) {
     if ($_GET['env'] != '') {
-        $url .= "_" . $GET['env'];
+        $url .= "_" . $_GET['env'];
     }
 }
 if (isset($_GET['port'])) {
