@@ -128,7 +128,7 @@ class open_id_azure_b2c_provision_dev implements open_id_authenticator { // this
             $_SESSION['open_id_state'] = bin2hex(random_bytes(5));
             $_SESSION['open_id_code_verifier'] = bin2hex(random_bytes(50));
             $_SESSION['open_id_authorize'] = true;
-            $_SESSION['open_id_action'] = 'open_id_azure_b2c_provision_dev'; get_class($this);
+            $_SESSION['open_id_action'] = 'open_id_azure_b2c_provision_dev'; // get_class($this);
             $_SESSION['open_id_azure_b2c_provision_port'] = $_GET['port'];
 
             $authorize_url = $this->get_authorization_url();
