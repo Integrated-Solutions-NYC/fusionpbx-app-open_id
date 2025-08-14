@@ -128,7 +128,7 @@ class open_id_azure_b2c_provision_dev implements open_id_authenticator { // this
             $_SESSION['open_id_state'] = bin2hex(random_bytes(5));
             $_SESSION['open_id_code_verifier'] = bin2hex(random_bytes(50));
             $_SESSION['open_id_authorize'] = true;
-            $_SESSION['open_id_action'] = 'open_id_azure_b2c_provision_dev'; // get_class($this);
+            $_SESSION['open_id_action'] = get_class($this);
             $_SESSION['open_id_azure_b2c_provision_port'] = $_GET['port'];
 
             $authorize_url = $this->get_authorization_url();
@@ -252,8 +252,14 @@ class open_id_azure_b2c_provision_dev implements open_id_authenticator { // this
                         echo "</form></div></body></html>";
                         exit();
                     }
-
-
+                    if ($user_info[$this->azure_field] != "" ) {
+                        echo "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Select Extension</title></head><body>";
+                        echo "<div style='max-width:400px;margin:60px auto;padding:32px;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.08);'>";
+                        echo "<h3>Identity Crisis</h3>";
+                        echo "Your logged in identity of " .  $user_info[$this->azure_field] . " is not associated with any extensions.";
+                        echo "<div></div></body></html>";
+                        exit();
+                    }
                 }
             }
         }
