@@ -1,6 +1,6 @@
 <?php  // July 27 2025 - Copyright 2025 Ardavan Hashemzadeh <ardavan@solutionsdx.com>
 
-class open_id_azure_b2c_provision implements open_id_authenticator {
+class open_id_azure_b2c_provision implements open_id_authenticator { // this and line 131 (has open_id_action) renamed for devwork
 
   	//
   	// OpenID Connect State Variables
@@ -252,8 +252,14 @@ class open_id_azure_b2c_provision implements open_id_authenticator {
                         echo "</form></div></body></html>";
                         exit();
                     }
-
-
+                    if ($user_info[$this->azure_field] != "" ) {
+                        echo "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Select Extension</title></head><body>";
+                        echo "<div style='max-width:400px;margin:60px auto;padding:32px;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.08);'>";
+                        echo "<h3>Identity Crisis</h3>";
+                        echo "Your logged in identity of " .  $user_info[$this->azure_field] . " is not associated with any extensions.";
+                        echo "<div></div></body></html>";
+                        exit();
+                    }
                 }
             }
         }
