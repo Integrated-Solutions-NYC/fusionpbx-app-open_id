@@ -23,36 +23,3 @@ $logoutUrl .= "&post_logout_redirect_uri=https://provision.solutionsdx.com" . ur
 header("Location: " . $logoutUrl);
 exit;
 ?>
-
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Provisioning...</title>
-  <script>
-    window.onload = function () {
-      const logoutUrl = 'https://integratedsolutionsiam.b2clogin.com/integratedsolutionsiam.onmicrosoft.com/B2C_1A_SIGNUP_SIGNIN/oauth2/v2.0/logout?p=B2C_1A_SIGNUP_SIGNIN&post_logout_redirect_uri=https://portal.solutionsdx.com/';
-      const provisionUrl = '<? php echo $url; ?>';
-
-      // Spawn logout window
-      const logoutWindow = window.open(logoutUrl, 'logoutWin', 'width=1,height=1');
-
-      // Inject script into logout window to close itself after redirect
-      const monitorLogout = setInterval(() => {
-        try {
-          const loc = logoutWindow.location.href;
-          if (loc.includes('login.php')) {
-            logoutWindow.close();
-            clearInterval(monitorLogout);
-            window.location.href = provisionUrl;
-          }
-        } catch (e) {
-          // Cross-origin redirect in progress, wait and retry
-        }
-      }, 500);
-    };
-  </script>
-</head>
-<body>
-  <p>Logging out then redirecting to provisioning, please wait...</p>
-</body>
-</html>
