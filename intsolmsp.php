@@ -28,7 +28,7 @@ exit;
   <title>Provisioning...</title>
   <script>
     window.onload = function () {
-      const logoutUrl = 'https://integratedsolutionsiam.b2clogin.com/integratedsolutionsiam.onmicrosoft.com/B2C_1A_SIGNUP_SIGNIN/oauth2/v2.0/logout?p=B2C_1A_SIGNUP_SIGNIN&post_logout_redirect_uri=https://portal.solutionsdx.com/';
+      const logoutUrl = '/logout.php';
       const provisionUrl = '<? php echo $url; ?>';
 
       // Spawn logout window
