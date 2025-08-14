@@ -38,7 +38,7 @@ exit;
       const monitorLogout = setInterval(() => {
         try {
           const loc = logoutWindow.location.href;
-          if (loc.includes('open_id.php')) {
+          if (loc.includes('login.php')) {
             logoutWindow.close();
             clearInterval(monitorLogout);
             window.location.href = provisionUrl;
