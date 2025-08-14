@@ -9,17 +9,19 @@ $domain->session();
 $domain->set();
 
 // Forward to open_id.php with all parameters
-$url = "/app/open_id/open_id.php?action=open_id_azure_b2c_provision";
+$provisionPath = "/app/open_id/open_id.php?action=open_id_azure_b2c_provision";
 if (isset($_GET['env'])) {
     if ($_GET['env'] != '') {
-        $url .= "_" . $_GET['env'];
+        $provisionPath .= "_" . $_GET['env'];
     }
 }
 if (isset($_GET['port'])) {
-    $url .= "&port=" . intval($_GET['port']);
+    $provisionPath .= "&port=" . intval($_GET['port']);
 }
-//header("Location: " . $url);
-//exit;
+$logoutUrl = "https://integratedsolutionsiam.b2clogin.com/integratedsolutionsiam.onmicrosoft.com/B2C_1A_SIGNUP_SIGNIN/oauth2/v2.0/logout?p=B2C_1A_SIGNUP_SIGNIN";
+$logoutUrl .= "&post_logout_redirect_uri=https://provision.solutionsdx.com" . urlencode($provisionPath);
+header("Location: " . $logoutUrl);
+exit;
 ?>
 
 <!DOCTYPE html>
