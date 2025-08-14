@@ -251,13 +251,13 @@ class open_id_azure_b2c_provision_dev implements open_id_authenticator { // this
                         echo "<button type='submit' style='margin-top:18px;padding:12px;background:#0078d4;color:#fff;border:none;border-radius:4px;width:100%;'>Provision</button>";
                         echo "</form></div></body></html>";
                         exit();
-                    } else {
-                        echo "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Select Extension</title></head><body>";
-                        echo "<div style='max-width:400px;margin:60px auto;padding:32px;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.08);'>";
-                        echo "<h3>Identity Crisis</h3>";
-                        echo "Your logged in identity of " .  $user_info[$this->azure_field] . " is not associated with any extensions.";
-                        echo "<div></div></body></html>";
-                        exit();
+                    // } else {
+                    //     echo "<!DOCTYPE html><html><head><meta charset='utf-8'><title>Select Extension</title></head><body>";
+                    //     echo "<div style='max-width:400px;margin:60px auto;padding:32px;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.08);'>";
+                    //     echo "<h3>Identity Crisis</h3>";
+                    //     echo "Your logged in identity of " .  $user_info[$this->azure_field] . " is not associated with any extensions.";
+                    //     echo "<div></div></body></html>";
+                    //     exit();
                     }
 
 
