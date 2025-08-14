@@ -18,8 +18,8 @@ if (isset($_GET['env'])) {
 if (isset($_GET['port'])) {
     $url .= "&port=" . intval($_GET['port']);
 }
-header("Location: " . $url);
-exit;
+//header("Location: " . $url);
+//exit;
 ?>
 
 <!DOCTYPE html>
