@@ -142,9 +142,9 @@ class open_id_azure_b2c implements open_id_authenticator {
 
                 if (isset($user_info[$this->azure_field])) {
                     global $database;
-                    $sql = "SELECT user_uuid, username, u.domain_uuid domain_uuid, d.domain_name domain_name
+                    $sql = "SELECT user_uuid, username, user_email, u.domain_uuid domain_uuid, d.domain_name domain_name, 'true' as authorized
                             FROM v_users u
-                            LEFT JOIN v_domains d ON d.domain_uuid = u.domain_uuid
+                            JOIN v_domains d ON d.domain_uuid = u.domain_uuid
                             WHERE u.{$this->table_field} = :value
                             AND user_enabled = 'true'";
                     $params = [
@@ -154,15 +154,17 @@ class open_id_azure_b2c implements open_id_authenticator {
                     $rows = $database->select($sql, $params, 'all');
 
                     if ($rows && count($rows) > 0) {
-                        if (isset($_POST['selected_domain_uuid'])) {
+                        if (isset($_POST['selected_user_uuid'])) {
                             foreach ($rows as $row) {
-                                if ($row['domain_uuid'] === $_POST['selected_domain_uuid']) {
-                                    $result = array_merge($row, [
-                                        "authorized" => true,
-                                        "user_mail" => $user_info['email']
-                                    ]);
-                                    $_SESSION['authorized'] = true;
-                                    $_SESSION['domain_uuid'] = $row['domain_uuid'];
+                                if ($row['user_uuid'] === $_POST['selected_user_uuid']) {
+                                    $result = $row; // array_merge($row, [
+                                        // "authorized" => true,
+                                        // "user_mail" => $user_info['email']
+                                    // ]);
+                                    // $_SESSION['authorized'] = true;
+                                    // $_SESSION['domain_uuid'] = $row['domain_uuid'];
+                                    //// $settings->set('domain_uuid', $row['domain_uuid']);
+                                    // $settings->domain_uuid = $row['domain_uuid'];
                                     break;
                                 }
                             }
@@ -227,8 +229,8 @@ class open_id_azure_b2c implements open_id_authenticator {
                             echo "<div class='domain-list'>";
                             foreach ($rows as $row) {
                                 echo "<label>";
-                                echo "<input type='radio' name='selected_domain_uuid' value='{$row['domain_uuid']}' required> ";
-                                echo htmlspecialchars($row['domain_name']);
+                                echo "<input type='radio' name='selected_user_uuid' value='{$row['user_uuid']}' required> ";
+                                echo htmlspecialchars($row['username']) . ' at ' . htmlspecialchars($row['domain_name']);
                                 echo "</label><br>";
                             }
                             // Preserve code and other needed info
@@ -243,18 +245,44 @@ class open_id_azure_b2c implements open_id_authenticator {
                         // Only one domain, proceed
                         else {
                             $row = $rows[0];
-                            $result = array_merge($row, [
-                                "authorized" => true,
-                                "user_mail" => $user_info['email']
-                            ]);
-                            $_SESSION['authorized'] = true;
-                            $_SESSION['domain_uuid'] = $row['domain_uuid'];
+                            $result = $row; // array_merge($row, [
+                                // "authorized" => true,
+                                // "user_mail" => $user_info['email']
+                            // ]);
+                            // $_SESSION['authorized'] = true;
+                            // $_SESSION['domain_uuid'] = $row['domain_uuid'];
+                            //// $settings->set('domain_uuid', $row['domain_uuid']);
+                            // $settings->domain_uuid = $row['domain_uuid'];
                         }
                     }
                 }
             }
         }
-
+        if (isset($settings['time_zone']['user'])) {
+            $_SESSION['time_zone']['user'] = $settings['time_zone']['user'];
+        } elseif (isset($settings['time_zone']['domain'])) {
+            $_SESSION['time_zone']['user'] = $settings['time_zone']['domain'];
+        } elseif (isset($settings['time_zone']['system'])) {
+            $_SESSION['time_zone']['user'] = $settings['time_zone']['system'];
+        } else {
+            $_SESSION['time_zone']['user'] = 'UTC';
+        }
+        $_SESSION['domain_name'] = $result['domain_name'];
+        $_SESSION['domain_uuid'] = $result['domain_uuid'];
+        $_SESSION['username'] = $result['user_name'];
+        $_SESSION['user_uuid'] = $result['user_uuid'];
+        $_SESSION['user_email'] = $result['user_email'];
+        $_SESSION['authorized'] = $result['authorized'];
+        //$_SESSION['time_zone']['user'] = $settings->get('time_zone', 'user',
+       //     $settings->get('time_zone', 'domain',
+        //        $settings->get('time_zone', 'system', 'UTC')
+        //    )
+        //);
+        //$settings = new settings([
+        //    'database' => database::new(),
+        //    'domain_uuid' => $_SESSION['domain_uuid'] ?? '',
+        //    'user_uuid' => $_SESSION['user_uuid'] ?? '',
+        //]);
         return $result;
     }
 
