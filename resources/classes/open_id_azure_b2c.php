@@ -2,9 +2,9 @@
 
 class open_id_azure_b2c implements open_id_authenticator {
 
-  	//
-  	// OpenID Connect State Variables
-  	//
+        //
+        // OpenID Connect State Variables
+        //
 
     protected $client_id;
     protected $client_secret;
@@ -17,44 +17,44 @@ class open_id_azure_b2c implements open_id_authenticator {
     protected $userinfo_endpoint;
     protected $end_session_endpoint;
 
-  	/**
-  	 * When true, the global default settings are set to use a globally unique username
-  	 * @var bool
-  	 */
+        /**
+         * When true, the global default settings are set to use a globally unique username
+         * @var bool
+         */
     protected $unique_username;
 
-  	/**
-  	 * When true, no errors will be thrown. When false, errors can be thrown to help with debugging
-  	 * @var bool
-  	 */
+        /**
+         * When true, no errors will be thrown. When false, errors can be thrown to help with debugging
+         * @var bool
+         */
     protected $suppress_errors;
 
-  	/**
-  	 * Field name that contains the OpenID Connect field
-  	 * @var string
-  	 */
+        /**
+         * Field name that contains the OpenID Connect field
+         * @var string
+         */
     protected $azure_field;
 
     /**
-  	 * Field name that contains the users table field
-  	 * @var string
-  	 */
+         * Field name that contains the users table field
+         * @var string
+         */
     protected $table_field;
 
-  	/**
-  	 * Set up URL parameters and object variables
-  	 *
-  	 * @param string $client_id     Your Client ID.
-  	 * @param string $client_secret Your Client Secret.
-  	 * @param string $redirect_uri  The redirect URI registered with OIDC provider.
-  	 * @param string $scope         Space-separated scopes (default: "openid email profile").
-  	 */
+        /**
+         * Set up URL parameters and object variables
+         *
+         * @param string $client_id     Your Client ID.
+         * @param string $client_secret Your Client Secret.
+         * @param string $redirect_uri  The redirect URI registered with OIDC provider.
+         * @param string $scope         Space-separated scopes (default: "openid email profile").
+         */
     public function __construct($scope = "openid email profile") {
         global $settings;
 
-    		//
-    		// Ensure we have a valid settings object
-    		//
+                //
+                // Ensure we have a valid settings object
+                //
         if (!($settings instanceof settings)) {
             $settings = new settings([
                 'database' => database::new(),
@@ -63,10 +63,10 @@ class open_id_azure_b2c implements open_id_authenticator {
             ]);
         }
 
-     		// Set the suppress errors with a default of true to avoid UI interruption
+                // Set the suppress errors with a default of true to avoid UI interruption
         $this->suppress_errors = $settings->get('open_id', 'suppress_errors', true);
 
-     		// Set the variables from settings
+                // Set the variables from settings
         $this->client_id = $settings->get('open_id', 'azure_b2c_client_id');
         $this->client_secret = $settings->get('open_id', 'azure_b2c_client_secret');
         $this->redirect_uri = $settings->get('open_id', 'azure_b2c_redirect_uri');
@@ -78,22 +78,22 @@ class open_id_azure_b2c implements open_id_authenticator {
             $this->redirect_uri = str_replace('{$domain_name}', $_SESSION['domain_name'], $this->redirect_uri);
         }
 
-    		//
-    		// Replace the {$plugin} placeholder for user
-    		//
+                //
+                // Replace the {$plugin} placeholder for user
+                //
         if (str_contains($this->redirect_uri, '{$plugin}')) {
             $this->redirect_uri = str_replace('{$plugin}', self::class, $this->redirect_uri);
         }
 
-    		// Get the field mapping for the OIDC email address to the user email address or username field in v_users table
+                // Get the field mapping for the OIDC email address to the user email address or username field in v_users table
         $mapping = $settings->get('open_id', 'azure_b2c_username_mapping');
 
-     		// When errors are allowed and the field mapping is empty or has an equal sign throw an error
+                // When errors are allowed and the field mapping is empty or has an equal sign throw an error
         if (!$this->suppress_errors && (empty($mapping) || !str_contains($mapping, '='))) {
             throw new \InvalidArgumentException('azure_username_mapping must be in the form azure_oidc_field=user_column');
         }
 
-    		// Map the OpenID Connect (OIDC) field to the user table field to validate the user exists
+                // Map the OpenID Connect (OIDC) field to the user table field to validate the user exists
         [$azure_field, $table_field] = explode('=', $mapping, 2);
 
         // Trim the whitespace for field names and store in the object
@@ -149,7 +149,6 @@ class open_id_azure_b2c implements open_id_authenticator {
                             AND user_enabled = 'true'";
                     $params = [
                       'value' => $user_info[$this->azure_field] //,
-                      // 'domain_uuid' => $_SESSION['domain_uuid']
                     ];
                     $rows = $database->select($sql, $params, 'all');
 
@@ -157,14 +156,7 @@ class open_id_azure_b2c implements open_id_authenticator {
                         if (isset($_POST['selected_user_uuid'])) {
                             foreach ($rows as $row) {
                                 if ($row['user_uuid'] === $_POST['selected_user_uuid']) {
-                                    $result = $row; // array_merge($row, [
-                                        // "authorized" => true,
-                                        // "user_mail" => $user_info['email']
-                                    // ]);
-                                    // $_SESSION['authorized'] = true;
-                                    // $_SESSION['domain_uuid'] = $row['domain_uuid'];
-                                    //// $settings->set('domain_uuid', $row['domain_uuid']);
-                                    // $settings->domain_uuid = $row['domain_uuid'];
+                                    $result = $row;
                                     break;
                                 }
                             }
@@ -244,15 +236,7 @@ class open_id_azure_b2c implements open_id_authenticator {
                         }
                         // Only one domain, proceed
                         else {
-                            $row = $rows[0];
-                            $result = $row; // array_merge($row, [
-                                // "authorized" => true,
-                                // "user_mail" => $user_info['email']
-                            // ]);
-                            // $_SESSION['authorized'] = true;
-                            // $_SESSION['domain_uuid'] = $row['domain_uuid'];
-                            //// $settings->set('domain_uuid', $row['domain_uuid']);
-                            // $settings->domain_uuid = $row['domain_uuid'];
+                            $result = $rows[0];
                         }
                     }
                 }
@@ -273,16 +257,10 @@ class open_id_azure_b2c implements open_id_authenticator {
         $_SESSION['user_uuid'] = $result['user_uuid'];
         $_SESSION['user_email'] = $result['user_email'];
         $_SESSION['authorized'] = $result['authorized'];
-        //$_SESSION['time_zone']['user'] = $settings->get('time_zone', 'user',
-       //     $settings->get('time_zone', 'domain',
-        //        $settings->get('time_zone', 'system', 'UTC')
-        //    )
-        //);
-        //$settings = new settings([
-        //    'database' => database::new(),
-        //    'domain_uuid' => $_SESSION['domain_uuid'] ?? '',
-        //    'user_uuid' => $_SESSION['user_uuid'] ?? '',
-        //]);
+        if ($result['domain_uuid'] !== $this->domain_uuid) {
+            $domain = new domains();
+            $domain->set();
+        }
         return $result;
     }
 
@@ -296,8 +274,8 @@ class open_id_azure_b2c implements open_id_authenticator {
     }
 
     protected function get_authorization_url(): string {
-    		// Generate a state value for CSRF protection.
-    		$this->state = $_SESSION['open_id_state'];
+                // Generate a state value for CSRF protection.
+                $this->state = $_SESSION['open_id_state'];
         $params = [
             'client_id' => $this->client_id,
             'response_type' => 'code',
@@ -338,17 +316,17 @@ class open_id_azure_b2c implements open_id_authenticator {
     }
 
     public static function get_banner_image(): string {
-    		global $settings;
-    		$azure_b2c_banner = $settings->get('open_id', 'azure_b2c_image', '');
-    		$text = new text();
-    		$text_array = $text->get();
-    		$alt = $text_array['alt-banner'] ?? 'Sign-in Using Microsoft';
-    		if (file_exists($azure_b2c_banner)) {
-      			$file_handle = fopen($azure_b2c_banner, 'rb');
-      			$data = base64_encode(fread($file_handle, 2182));
-      			fclose($file_handle);
-      			return "<img src='data:image/png;base64,$data' alt='$alt'/>";
-    		}
-    		return $alt;
-  	}
+                global $settings;
+                $azure_b2c_banner = $settings->get('open_id', 'azure_b2c_image', '');
+                $text = new text();
+                $text_array = $text->get();
+                $alt = $text_array['alt-banner'] ?? 'Sign-in Using Microsoft';
+                if (file_exists($azure_b2c_banner)) {
+                        $file_handle = fopen($azure_b2c_banner, 'rb');
+                        $data = base64_encode(fread($file_handle, 2182));
+                        fclose($file_handle);
+                        return "<img src='data:image/png;base64,$data' alt='$alt'/>";
+                }
+                return $alt;
+        }
 }
