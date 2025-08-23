@@ -236,8 +236,7 @@ class open_id_azure_b2c implements open_id_authenticator {
                         }
                         // Only one domain, proceed
                         else {
-                            $row = $rows[0];
-                            $result = $row;
+                            $result = $rows[0];
                         }
                     }
                 }
@@ -258,6 +257,10 @@ class open_id_azure_b2c implements open_id_authenticator {
         $_SESSION['user_uuid'] = $result['user_uuid'];
         $_SESSION['user_email'] = $result['user_email'];
         $_SESSION['authorized'] = $result['authorized'];
+        if ($result['domain_uuid'] !== $this->domain_uuid) {
+            $domain = new domains();
+            $domain->set();
+        }
         return $result;
     }
 
