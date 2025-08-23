@@ -235,9 +235,8 @@ class open_id_azure_b2c implements open_id_authenticator {
                             exit();
                         }
                         // Only one domain, proceed
-                        else { $result = $rows[0];
-                            // $row = $rows[0];
-                            // $result = $row;
+                        else {
+                            $result = $rows[0];
                         }
                     }
                 }
