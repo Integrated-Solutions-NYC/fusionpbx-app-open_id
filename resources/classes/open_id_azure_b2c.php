@@ -122,7 +122,7 @@ class open_id_azure_b2c implements open_id_authenticator {
         if (!isset($_GET['code'])) {
             if (!empty($_SESSION['open_id_authorize']) && $_SESSION['open_id_authorize']) {
                 $_SESSION['open_id_authorize'] = false;
-                die('unable to redirect');
+                die('unable to redirect, please try refreshing');
             }
 
             $_SESSION['open_id_state'] = bin2hex(random_bytes(5));
