@@ -448,7 +448,7 @@ class open_id_okta implements open_id_authenticator {
 		}
 	}
 
-	public static function get_banner_image(): string {
+	public static function get_banner_image(settings $settings): string {
 		return "<div class=''"
 				. " style='display: inline-block;"
 				. " border: 2px solid #ccc;"
@@ -462,5 +462,17 @@ class open_id_okta implements open_id_authenticator {
 					. "Sign-in with OKTA"
 				. "</div>"
 		;
+	}
+
+	public static function get_banner_css_class(settings $settings): string {
+		return 'class';
+	}
+
+	public static function pre_session_destroy_logout_event(string $logout_destination) {
+
+	}
+
+	public static function post_session_destroy_logout_event(string $logout_destination) {
+
 	}
 }
