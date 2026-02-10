@@ -122,7 +122,7 @@ class open_id_azure_b2c implements open_id_authenticator {
         if (!isset($_GET['code'])) {
             if (!empty($_SESSION['open_id_authorize']) && $_SESSION['open_id_authorize']) {
                 $_SESSION['open_id_authorize'] = false;
-                die('unable to redirect');
+                die('unable to redirect, please refresh page or <button onclick="location.reload()">Refresh Page</button>');
             }
 
             $_SESSION['open_id_state'] = bin2hex(random_bytes(5));
@@ -329,7 +329,8 @@ class open_id_azure_b2c implements open_id_authenticator {
                 }
                 return $alt;
         }
-	public static function get_banner_css_class(settings $settings): string {
-		return $settings->get('open_id', 'open_id_css_class', 'banner_css_class');
-	}
+        provision
+        public function get_banner_css_class() {
+                return 'login-banner-default';
+        }
 }
