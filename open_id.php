@@ -59,7 +59,7 @@ if ( (isset($_GET['action']) || isset($_SESSION['open_id_action']) )
 	$result = $authenticator->authenticate();
 	if (!empty($result)) {
 		//create the user session
-		authentication::create_user_session($result);
+		authentication::create_user_session($result, $settings);
 
 		//redirect to landing page
 		$landing_page = $settings->get('login', 'destination', '/core/dashboard');
