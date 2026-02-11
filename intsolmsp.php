@@ -18,8 +18,8 @@ if (isset($_GET['env'])) {
 if (isset($_GET['port'])) {
     $provisionPath .= "&port=" . intval($_GET['port']);
 }
-$logoutUrl = "https://integratedsolutionsiam.b2clogin.com/integratedsolutionsiam.onmicrosoft.com/B2C_1A_SIGNUP_SIGNIN/oauth2/v2.0/logout?p=B2C_1A_SIGNUP_SIGNIN";
-$logoutUrl .= "&post_logout_redirect_uri=https://portal.solutionsdx.com" . urlencode($provisionPath);
+$logoutUrl = $_SESSION['logout_destination'] . urlencode($provisionPath);
+
 header("Location: " . $logoutUrl);
 exit;
 ?>
