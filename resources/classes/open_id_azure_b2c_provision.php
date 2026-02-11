@@ -332,4 +332,7 @@ class open_id_azure_b2c_provision implements open_id_authenticator { // this and
     		}
     		return $alt;
   	}
+    public function get_banner_css_class() {
+      return $settings->get('open_id', 'open_id_css_class', 'banner_css_class');
+    }
 }
