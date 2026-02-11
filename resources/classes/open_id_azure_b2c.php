@@ -315,7 +315,7 @@ class open_id_azure_b2c implements open_id_authenticator {
         return json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
     }
 
-    public static function get_banner_image(): string {
+    public static function get_banner_image(settings $settings): string {
                 global $settings;
                 $azure_b2c_banner = $settings->get('open_id', 'azure_b2c_image', '');
                 $text = new text();
