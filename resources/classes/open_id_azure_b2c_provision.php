@@ -318,7 +318,7 @@ class open_id_azure_b2c_provision implements open_id_authenticator { // this and
         return json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
     }
 
-    public static function get_banner_image(): string {
+    public static function get_banner_image(settings $settings): string {
     		global $settings;
     		$azure_b2c_banner = $settings->get('open_id', 'azure_b2c_image', '');
     		$text = new text();
@@ -332,7 +332,7 @@ class open_id_azure_b2c_provision implements open_id_authenticator { // this and
     		}
     		return $alt;
   	}
-    public function get_banner_css_class() {
+    public function get_banner_css_class(settings $settings): string {
       return $settings->get('open_id', 'open_id_css_class', 'banner_css_class');
     }
 }
